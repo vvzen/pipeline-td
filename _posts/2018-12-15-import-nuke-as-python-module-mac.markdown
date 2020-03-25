@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  "Import Nuke as python module (macOS)"
+title:  "Import Nuke as python module"
 date:   2018-12-16 16:01:46 +0100
-categories: jekyll update
+categories: nuke python api
 ---
 
 In case you've been wondering if it's possible to use nuke's API outside of Nuke, you're not alone.
@@ -14,6 +14,8 @@ If you're on macOS, it's not as straightforward.
 
 Straight from The Foundry support:
 
+----
+<br>
 <em>Hey Valerio,
 <br/>
 <br/>
@@ -40,3 +42,34 @@ Kind Regards,
 <br/>
 Peter
 </em>
+
+----
+<br>
+
+So on linux you shouldn't have any issues by just using the python interpreter that ships with nuke.
+But be aware that doing importing nuke in your python session/scripts like this:
+`import nuke`
+
+will actually change your `PYTHONPATH`.
+
+Nuke will prepend its own paths at the beginning of your existing `PYTHONPATH` so that it loads the right modules.
+For example, let's say that you have `OpenColorIO` installed on your system.
+As of now (I guess v10+?) Nuke ships with its own `OpenColorIO`.
+If you want to use nuke's OCIO, then you will need to do this:
+
+{% highlight python %}
+import nuke
+import PyOpenColorIO
+{% endhighlight %}
+
+Doing this instead
+
+{% highlight python %}
+import PyOpenColorIO
+import nuke
+{% endhighlight %}
+
+will result in you loading your system level OpenColorIO.
+
+And let me give you a hint: if you do the latter, your session/script will probably crash, unless your `PyOpenColorIO.so` is matching exactly nuke's one (in terms of being the same version and being compiled for the same python version)! 😁
+
